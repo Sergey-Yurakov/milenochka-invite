@@ -455,7 +455,13 @@ window.INVITE_CONFIG = {
     const c = el('div', 'screen__center');
     const her = CFG.herName ? `${esc(CFG.herName)}, ` : '';
     c.appendChild(el('div', 'final-heart', '💌'));
-    c.appendChild(el('h1', 'title', esc(CFG.greeting || ('Привет' + (CFG.herName ? ', ' + CFG.herName : '') + '!'))));
+    const greet = el('h1', 'title', esc(CFG.greeting || ('Привет' + (CFG.herName ? ', ' + CFG.herName : '') + '!')));
+    // SoyuzGrotesk — all-caps (нет строчных), поэтому для приветствия
+    // используем Comfortaa, чтобы «Привет, Миленочка» было с обычным регистром
+    greet.style.fontFamily = "'Comfortaa', -apple-system, sans-serif";
+    greet.style.fontWeight = '700';
+    greet.style.letterSpacing = '0';
+    c.appendChild(greet);
     c.appendChild(el('p', 'subtitle', 'У меня для тебя есть маленькое приглашение…'));
     const btn = el('button', 'btn', 'Открыть открытку 💌');
     btn.onclick = () => showScreen('question');
