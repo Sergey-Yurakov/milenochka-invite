@@ -289,7 +289,7 @@ window.INVITE_CONFIG = {
     title: "И так... Когда ты свободна?",
     button: "Выбери дату ❤️",
     allowHerChoice: true, // true — дату выбирает она; false — показываем вашу дату
-    myDate: "2026-06-15",
+    myDate: "today",      // "today" = сегодняшняя дата по умолчанию (или конкретная "2026-12-31")
     myTime: "19:30",
   },
 
@@ -376,9 +376,16 @@ window.INVITE_CONFIG = {
   const CFG = window.INVITE_CONFIG || {};
 
   const screens = ['intro', 'question', 'confirm', 'datetime', 'food', 'final'];
+  const _todayISO = () => {
+    const d = new Date();
+    const p = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+  };
+  const _cfgDate = CFG.datetime?.myDate;
   const state = {
     step: 0,
-    date: CFG.datetime?.myDate || '',
+    // если дата не задана или задана как "today" — берём сегодняшнюю
+    date: (!_cfgDate || _cfgDate === 'today') ? _todayISO() : _cfgDate,
     time: CFG.datetime?.myTime || '',
     foods: [],
   };
@@ -572,8 +579,8 @@ window.INVITE_CONFIG = {
     if (d.allowHerChoice !== false) {
       const f1 = el('div', 'field');
       f1.innerHTML = `<label>Дата</label>`;
-      const di = el('input'); di.type = 'date'; di.value = state.date || '';
-      di.min = new Date().toISOString().slice(0,10);
+      const di = el('input'); di.type = 'date'; di.value = state.date || _todayISO();
+      di.min = _todayISO();
       di.oninput = () => { state.date = di.value; updateDateBtn(); };
       f1.appendChild(di);
       wrap.appendChild(f1);
