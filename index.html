@@ -752,26 +752,10 @@ window.INVITE_CONFIG = {
     const text = buildReportText();
     const shareCfg = r.share || {};
 
-    // ГЛАВНАЯ кнопка: отправить ответ в Telegram (работает без VPN)
-    if (shareCfg.telegramUser) {
-      const tgMain = el('button', 'btn', 'Отправить ответ в Telegram ✈️');
-      tgMain.onclick = () => {
-        const url = `https://t.me/${shareCfg.telegramUser.replace(/^@/,'')}?text=${encodeURIComponent(text)}`;
-        window.open(url, '_blank');
-        setReportStatus('Открылся чат в Telegram — нажми «Отправить» 💌');
-      };
-      wrap.appendChild(tgMain);
-    } else {
-      // если ник не задан — показываем авто-отправку как основную
-      const send = el('button', 'btn', 'Отправить ответ 💌');
-      send.onclick = async () => {
-        const ok = await sendReport(text);
-        if (ok) { send.textContent = 'Отправлено ✓'; send.disabled = true; }
-      };
-      wrap.appendChild(send);
-    }
+    // Ответ отправляется автоматически при показе финала (autoSendReport).
+    // Кнопка «Отправить» не нужна — иначе данные уходят дважды.
 
-    // Ряд вторичных кнопок
+    // Ряд вторичных кнопок (на случай, если автоотправка не дошла)
     const row = el('div');
     row.style.display = 'flex';
     row.style.gap = '8px';
